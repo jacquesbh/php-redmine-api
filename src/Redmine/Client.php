@@ -711,6 +711,7 @@ class Client
             if (!$async) {
                 throw $e;
             }
+            return false;
         }
         curl_close($curl);
 
