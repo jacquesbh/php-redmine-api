@@ -269,12 +269,13 @@ class Client
      *
      * @param string $path
      * @param string $data
+     * @param bool $async
      *
      * @return array
      */
-    public function put($path, $data)
+    public function put($path, $data, $async = false)
     {
-        return $this->runRequest($path, 'PUT', $data);
+        return $this->runRequest($path, 'PUT', $data, $async);
     }
 
     /**
@@ -531,10 +532,11 @@ class Client
      * @param string $path
      * @param string $method
      * @param string $data
+     * @param bool $async
      *
      * @return resource a cURL handle on success, <b>FALSE</b> on errors
      */
-    public function prepareRequest($path, $method = 'GET', $data = '')
+    public function prepareRequest($path, $method = 'GET', $data = '', $async = false)
     {
         $this->responseCode = null;
         $curl = curl_init();
@@ -542,7 +544,17 @@ class Client
         // General cURL options
         $this->setCurlOption(CURLOPT_VERBOSE, 0);
         $this->setCurlOption(CURLOPT_HEADER, 0);
-        $this->setCurlOption(CURLOPT_RETURNTRANSFER, 1);
+
+        if ($async) {
+            $this->setCurlOption(CURLOPT_RETURNTRANSFER, false);
+            $this->setCurlOption(CURLOPT_FORBID_REUSE, true);
+            $this->setCurlOption(CURLOPT_TIMEOUT, 1);
+            $this->setCurlOption(CURLOPT_CONNECTTIMEOUT, 1);
+            $this->setCurlOption(CURLOPT_DNS_CACHE_TIMEOUT, 10);
+            $this->setCurlOption(CURLOPT_FRESH_CONNECT, true);
+        } else {
+            $this->setCurlOption(CURLOPT_RETURNTRANSFER, 1);
+        }
 
         // HTTP Basic Authentication
         if ($this->apikeyOrUsername && $this->useHttpAuth) {
@@ -679,14 +691,15 @@ class Client
      * @param string $path
      * @param string $method
      * @param string $data
+     * @param bool $async
      *
      * @throws \Exception If anything goes wrong on curl request
      *
      * @return false|\SimpleXMLElement|string
      */
-    protected function runRequest($path, $method = 'GET', $data = '')
+    protected function runRequest($path, $method = 'GET', $data = '', $async = false)
     {
-        $curl = $this->prepareRequest($path, $method, $data);
+        $curl = $this->prepareRequest($path, $method, $data, $async);
 
         $response = curl_exec($curl);
         $this->responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);

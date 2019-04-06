@@ -67,12 +67,13 @@ abstract class AbstractApi
      *
      * @param string $path
      * @param string $data
+     * @param bool $async
      *
      * @return string|false
      */
-    protected function put($path, $data)
+    protected function put($path, $data, $async = false)
     {
-        return $this->client->put($path, $data);
+        return $this->client->put($path, $data, $async);
     }
 
     /**

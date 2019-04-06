@@ -143,10 +143,11 @@ class Issue extends AbstractApi
      *
      * @param string $id     the issue number
      * @param array  $params
+     * @param bool $async
      *
      * @return string|false
      */
-    public function update($id, array $params)
+    public function update($id, array $params, $async = false)
     {
         $defaults = [
             'id' => $id,
@@ -165,7 +166,7 @@ class Issue extends AbstractApi
 
         $xml = $this->buildXML($params);
 
-        return $this->put('/issues/'.$id.'.xml', $xml->asXML());
+        return $this->put('/issues/'.$id.'.xml', $xml->asXML(), $async);
     }
 
     /**
