@@ -548,7 +548,7 @@ class Client
         if ($async) {
             $this->setCurlOption(CURLOPT_RETURNTRANSFER, false);
             $this->setCurlOption(CURLOPT_FORBID_REUSE, true);
-            $this->setCurlOption(CURLOPT_TIMEOUT, 1);
+            $this->setCurlOption(CURLOPT_TIMEOUT_MS, 300);
             $this->setCurlOption(CURLOPT_CONNECTTIMEOUT, 1);
             $this->setCurlOption(CURLOPT_DNS_CACHE_TIMEOUT, 10);
             $this->setCurlOption(CURLOPT_FRESH_CONNECT, true);
