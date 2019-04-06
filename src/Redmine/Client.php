@@ -708,7 +708,9 @@ class Client
         if (curl_errno($curl)) {
             $e = new \Exception(curl_error($curl), curl_errno($curl));
             curl_close($curl);
-            throw $e;
+            if (!$async) {
+                throw $e;
+            }
         }
         curl_close($curl);
 
